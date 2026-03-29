@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏积分计算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-purple-500 to-pink-500 min-h-screen p-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800">🎮 游戏积分计算器</h1>
+            <button id="resetBtn" class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all">🔄 重置</button>
+        </div>
+
+        <!-- 自动查询模块 -->
+        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8 border border-blue-200">
+            <h3 class="text-xl font-semibold text-blue-600 mb-4">🔍 一键查询最近战绩</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-2">
+                    <label class="text-gray-700 font-medium">召唤师名称</label>
+                    <input type="text" id="summonerName" placeholder="请输入召唤师ID" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-gray-700 font-medium">所在区服</label>
+                    <select id="server" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="1">艾欧尼亚</option>
+                        <option value="2">比尔吉沃特</option>
+                        <option value="3">祖安</option>
+                        <option value="4">诺克萨斯</option>
+                        <option value="5">班德尔城</option>
+                        <option value="6">德玛西亚</option>
+                        <option value="7">皮尔特沃夫</option>
+                        <option value="8">战争学院</option>
+                        <option value="9">弗雷尔卓德</option>
+                        <option value="10">巨神峰</option>
+                        <option value="11">雷瑟守备</option>
+                        <option value="12">无畏先锋</option>
+                        <option value="13">裁决之地</option>
+                        <option value="14">黑色玫瑰</option>
+                        <option value="15">暗影岛</option>
+                        <option value="16">钢铁烈阳</option>
+                        <option value="17">水晶之痕</option>
+                        <option value="18">均衡教派</option>
+                        <option value="19">影流</option>
+                        <option value="20">守望之海</option>
+                        <option value="21">征服之海</option>
+                        <option value="22">卡拉曼达</option>
+                        <option value="23">皮城警备</option>
+                        <option value="24">男爵领域</option>
+                        <option value="25">峡谷之巅</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button id="queryBtn" class="w-full px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all">查询最近一局</button>
+                </div>
+            </div>
+            <div id="queryStatus" class="mt-3 text-sm text-gray-600 hidden"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- 我的数据 -->
+            <div class="space-y-6">
+                <h2 class="text-2xl font-semibold text-purple-600 mb-4">我的数据</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label class="text-gray-700 font-medium">游戏结果</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="gameResult" value="win" class="w-4 h-4 text-purple-600" checked>
+                                <span>赢 <span class="text-green-600 text-sm">(+10)</span></span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="gameResult" value="lose" class="w-4 h-4 text-purple-600">
+                                <span>输 <span class="text-red-600 text-sm">(-40)</span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-gray-700 font-medium">击杀数 <span class="text-green-600 text-sm">(+1/个，0个-40)</span></label>
+                        <input type="number" id="kills" value="" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-gray-700 font-medium">死亡数 <span class="text-red-600 text-sm">(-3/个，0个+20)</span></label>
+                        <input type="number" id="deaths" value="" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-gray-700 font-medium">单杀数 <span class="text-green-600 text-sm">(+5/个)</span></label>
+                        <input type="number" id="soloKills" value="" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-gray-700 font-medium">被单杀数 <span class="text-red-600 text-sm">(-20/个)</span></label>
+                        <input type="number" id="soloDeaths" value="" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="mvp" class="w-5 h-5 text-purple-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">是否MVP <span class="text-green-600 text-sm">(击杀积分翻倍)</span></label>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="godlike" class="w-5 h-5 text-purple-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">是否超神 <span class="text-green-600 text-sm">(+20)</span></label>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="quadra" class="w-5 h-5 text-purple-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">是否4杀 <span class="text-green-600 text-sm">(+40)</span></label>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="penta" class="w-5 h-5 text-purple-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">是否五杀 <span class="text-green-600 text-sm">(+100)</span></label>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="lowestScore" class="w-5 h-5 text-purple-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">是否评分最低 <span class="text-red-600 text-sm">(-20)</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 对位数据 -->
+            <div class="space-y-6">
+                <h2 class="text-2xl font-semibold text-pink-600 mb-4">对位数据</h2>
+                
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-gray-700 font-medium">对位击杀数 <span class="text-green-600 text-sm">(0个+20)</span></label>
+                        <input type="number" id="enemyKills" value="" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-gray-700 font-medium">对位死亡数 <span class="text-red-600 text-sm">(0个-40)</span></label>
+                        <input type="number" id="enemyDeaths" value="" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none">
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="enemyMvp" class="w-5 h-5 text-pink-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">对位是否MVP <span class="text-red-600 text-sm">(-击杀数×2)</span></label>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="enemyGodlike" class="w-5 h-5 text-pink-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">对位是否超神 <span class="text-red-600 text-sm">(-20)</span></label>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="enemyQuadra" class="w-5 h-5 text-pink-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">对位是否4杀 <span class="text-red-600 text-sm">(-40)</span></label>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="enemyPenta" class="w-5 h-5 text-pink-600">
+                            <label class="text-gray-700 font-medium cursor-pointer">对位是否五杀 <span class="text-red-600 text-sm">(-100)</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果展示 -->
+        <div class="mt-10 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800">最终积分</h3>
+                <div id="totalScore" class="text-4xl font-bold text-purple-600">0</div>
+            </div>
+
+            <div id="detail" class="text-sm text-gray-600 space-y-1">
+                <!-- 明细会在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 历史记录区域 -->
+        <div class="mt-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">📜 历史记录</h3>
+                <button id="clearHistoryBtn" class="px-4 py-1.5 bg-gray-500 hover:bg-gray-600 text-white text-sm rounded-lg transition-all">清空历史</button>
+            </div>
+            <div id="historyList" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                <div class="text-center text-gray-500 py-4">暂无历史记录</div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center text-gray-500 text-sm">
+            输入数据实时自动计算，点击重置会自动保存记录
+        </div>
+    </div>
+
+    <script>
+        // 所有输入元素
+        const inputs = document.querySelectorAll('input[type="number"], input[type="radio"], input[type="checkbox"]')
+        
+        // 计算函数
+        function calculate() {
+            let score = 0
+            const detail = []
+
+            // 游戏结果
+            const isWin = document.querySelector('input[name="gameResult"]:checked').value === 'win'
+            if (isWin) {
+                score += 10
+                detail.push('游戏胜利：+10分')
+            } else {
+                score -= 40
+                detail.push('游戏失败：-40分')
+            }
+
+            // 击杀数
+            const killsStr = document.getElementById('kills').value.trim()
+            const kills = killsStr ? parseInt(killsStr) : null
+            const isMvp = document.getElementById('mvp').checked
+            if (kills !== null) {
+                if (kills > 0) {
+                    const killScore = kills * 1
+                    score += killScore
+                    detail.push(`击杀 ${kills} 个：+${killScore}分`)
+                    if (isMvp) {
+                        score += killScore
+                        detail.push(`MVP击杀翻倍：+${killScore}分`)
+                    }
+                }
+                if (kills === 0) {
+                    score -= 40
+                    detail.push('一次不杀：-40分')
+                }
+            }
+
+            // 死亡数
+            const deathsStr = document.getElementById('deaths').value.trim()
+            const deaths = deathsStr ? parseInt(deathsStr) : null
+            if (deaths !== null) {
+                if (deaths > 0) {
+                    score -= deaths * 3
+                    detail.push(`死亡 ${deaths} 个：-${deaths * 3}分`)
+                }
+                if (deaths === 0) {
+                    score += 20
+                    detail.push('一次不死：+20分')
+                }
+            }
+
+            // 单杀数
+            const soloKillsStr = document.getElementById('soloKills').value.trim()
+            const soloKills = soloKillsStr ? parseInt(soloKillsStr) : null
+            if (soloKills !== null && soloKills > 0) {
+                score += soloKills * 5
+                detail.push(`单杀 ${soloKills} 次：+${soloKills * 5}分`)
+            }
+
+            // 被单杀数
+            const soloDeathsStr = document.getElementById('soloDeaths').value.trim()
+            const soloDeaths = soloDeathsStr ? parseInt(soloDeathsStr) : null
+            if (soloDeaths !== null && soloDeaths > 0) {
+                score -= soloDeaths * 20
+                detail.push(`被单杀 ${soloDeaths} 次：-${soloDeaths * 20}分`)
+            }
+
+            // 特殊成就
+            if (document.getElementById('godlike').checked) {
+                score += 20
+                detail.push('超神：+20分')
+            }
+            if (document.getElementById('quadra').checked) {
+                score += 40
+                detail.push('4杀：+40分')
+            }
+            if (document.getElementById('penta').checked) {
+                score += 100
+                detail.push('五杀：+100分')
+            }
+            if (document.getElementById('lowestScore').checked) {
+                score -= 20
+                detail.push('评分最低：-20分')
+            }
+
+            // 对位击杀数
+            const enemyKillsStr = document.getElementById('enemyKills').value.trim()
+            const enemyKills = enemyKillsStr ? parseInt(enemyKillsStr) : null
+            if (enemyKills !== null && enemyKills === 0) {
+                score += 20
+                detail.push('对位一次不杀：+20分')
+            }
+
+            // 对位死亡数
+            const enemyDeathsStr = document.getElementById('enemyDeaths').value.trim()
+            const enemyDeaths = enemyDeathsStr ? parseInt(enemyDeathsStr) : null
+            if (enemyDeaths !== null && enemyDeaths === 0) {
+                score -= 40
+                detail.push('对位一次不死：-40分')
+            }
+
+            // 对位其他规则
+            if (document.getElementById('enemyMvp').checked) {
+                const enemyKills = enemyKillsStr ? parseInt(enemyKillsStr) : 0
+                const deduct = enemyKills * 2
+                score -= deduct
+                detail.push(`对位MVP：-${deduct}分 (击杀×2)`)
+            }
+            if (document.getElementById('enemyGodlike').checked) {
+                score -= 20
+                detail.push('对位超神：-20分')
+            }
+            if (document.getElementById('enemyQuadra').checked) {
+                score -= 40
+                detail.push('对位4杀：-40分')
+            }
+            if (document.getElementById('enemyPenta').checked) {
+                score -= 100
+                detail.push('对位五杀：-100分')
+            }
+
+            // 更新显示
+            document.getElementById('totalScore').textContent = score
+            document.getElementById('totalScore').className = `text-4xl font-bold ${score >= 0 ? 'text-green-600' : 'text-red-600'}`
+            document.getElementById('detail').innerHTML = detail.map(item => `<div>• ${item}</div>`).join('')
+        }
+
+        // 监听所有输入变化
+        inputs.forEach(input => {
+            input.addEventListener('input', calculate)
+            input.addEventListener('change', calculate)
+        })
+
+        // 初始化计算
+        calculate()
+
+        // 保存历史记录
+        function saveHistory() {
+            const currentScore = parseInt(document.getElementById('totalScore').textContent)
+            const currentDetail = Array.from(document.querySelectorAll('#detail div')).map(d => d.textContent.replace('• ', ''))
+            const history = JSON.parse(localStorage.getItem('scoreHistory') || '[]')
+            history.unshift({
+                id: Date.now(),
+                time: new Date().toLocaleString('zh-CN'),
+                score: currentScore,
+                detail: currentDetail
+            })
+            // 最多保留20条历史
+            if (history.length > 20) history.pop()
+            localStorage.setItem('scoreHistory', JSON.stringify(history))
+            renderHistory()
+        }
+
+        // 渲染历史记录
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem('scoreHistory') || '[]')
+            const historyList = document.getElementById('historyList')
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="text-center text-gray-500 py-4">暂无历史记录</div>'
+                return
+            }
+            historyList.innerHTML = history.map(item => `
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div class="flex justify-between items-center cursor-pointer history-header" data-id="${item.id}">
+                        <span class="text-sm text-gray-600">${item.time}</span>
+                        <span class="font-bold text-lg ${item.score >= 0 ? 'text-green-600' : 'text-red-600'}">${item.score}</span>
+                    </div>
+                    <div class="history-detail mt-2 text-sm text-gray-600 hidden" id="detail-${item.id}">
+                        ${item.detail.map(d => `<div>• ${d}</div>`).join('')}
+                    </div>
+                </div>
+            `).join('')
+            // 绑定历史项点击展开事件
+            document.querySelectorAll('.history-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const id = header.dataset.id
+                    const detail = document.getElementById(`detail-${id}`)
+                    detail.classList.toggle('hidden')
+                })
+            })
+        }
+
+        // 重置功能
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            // 保存当前记录到历史
+            saveHistory()
+            // 游戏结果默认赢
+            document.querySelector('input[name="gameResult"][value="win"]').checked = true
+            // 清空所有数值输入
+            document.querySelectorAll('input[type="number"]').forEach(input => input.value = '')
+            // 取消所有checkbox勾选
+            document.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false)
+            // 重新计算
+            calculate()
+        })
+
+        // 清空历史功能
+        document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+            if (confirm('确定要清空所有历史记录吗？')) {
+                localStorage.removeItem('scoreHistory')
+                renderHistory()
+            }
+        })
+
+        // 战绩查询功能
+        document.getElementById('queryBtn').addEventListener('click', async () => {
+            const summonerName = document.getElementById('summonerName').value.trim()
+            const server = document.getElementById('server').value
+            const statusEl = document.getElementById('queryStatus')
+            
+            if (!summonerName) {
+                statusEl.textContent = '请输入召唤师名称'
+                statusEl.className = 'mt-3 text-sm text-red-600'
+                statusEl.classList.remove('hidden')
+                return
+            }
+
+            statusEl.textContent = '正在查询中...'
+            statusEl.className = 'mt-3 text-sm text-blue-600'
+            statusEl.classList.remove('hidden')
+
+            try {
+                // 调用我们自己搭建的掌盟免费接口，不需要密钥
+                const res = await fetch(`/lol/match?summonerName=${encodeURIComponent(summonerName)}&server=${server}`)
+                const data = await res.json()
+
+                if (data.error === 0) {
+                    const latestMatch = data.data
+
+                    // 自动填充数据
+                    document.querySelector(`input[name="gameResult"][value="${latestMatch.win ? 'win' : 'lose'}"]`).checked = true
+                    document.getElementById('kills').value = latestMatch.kills
+                    document.getElementById('deaths').value = latestMatch.deaths
+                    document.getElementById('soloKills').value = latestMatch.soloKills || 0
+                    document.getElementById('soloDeaths').value = latestMatch.soloDeaths || 0
+                    
+                    // 自动勾选成就
+                    document.getElementById('mvp').checked = latestMatch.mvp
+                    document.getElementById('godlike').checked = latestMatch.godlike
+                    document.getElementById('quadra').checked = latestMatch.quadra
+                    document.getElementById('penta').checked = latestMatch.penta
+                    document.getElementById('lowestScore').checked = latestMatch.lowestScore
+
+                    // 自动填充对位数据
+                    document.getElementById('enemyKills').value = latestMatch.enemyKills || ''
+                    document.getElementById('enemyDeaths').value = latestMatch.enemyDeaths || ''
+                    document.getElementById('enemyMvp').checked = latestMatch.enemyMvp
+                    document.getElementById('enemyGodlike').checked = latestMatch.enemyGodlike
+                    document.getElementById('enemyQuadra').checked = latestMatch.enemyQuadra
+                    document.getElementById('enemyPenta').checked = latestMatch.enemyPenta
+
+                    // 重新计算积分
+                    calculate()
+                    
+                    statusEl.textContent = '查询成功！数据已自动填充'
+                    statusEl.className = 'mt-3 text-sm text-green-600'
+                } else {
+                    statusEl.textContent = `查询失败：${data.msg || '未查询到战绩'}`
+                    statusEl.className = 'mt-3 text-sm text-red-600'
+                }
+            } catch (e) {
+                statusEl.textContent = `查询失败：网络错误`
+                statusEl.className = 'mt-3 text-sm text-red-600'
+                console.error(e)
+            }
+        })
+
+        // 页面加载时渲染历史
+        renderHistory()
+    </script>
+</body>
+</html>
