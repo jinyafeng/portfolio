@@ -111,12 +111,14 @@
 
                         <div class="flex items-center gap-3">
                             <input type="checkbox" id="quadra" class="w-5 h-5 text-purple-600">
-                            <label class="text-gray-700 font-medium cursor-pointer">是否4杀 <span class="text-green-600 text-sm">(+40)</span></label>
+                            <label class="text-gray-700 font-medium cursor-pointer">是否4杀 <span class="text-green-600 text-sm">(+40/个)</span></label>
+                            <input type="number" id="quadraCount" value="1" min="1" disabled class="w-16 px-2 py-1 border border-gray-300 rounded text-center">
                         </div>
 
                         <div class="flex items-center gap-3">
                             <input type="checkbox" id="penta" class="w-5 h-5 text-purple-600">
-                            <label class="text-gray-700 font-medium cursor-pointer">是否五杀 <span class="text-green-600 text-sm">(+100)</span></label>
+                            <label class="text-gray-700 font-medium cursor-pointer">是否五杀 <span class="text-green-600 text-sm">(+100/个)</span></label>
+                            <input type="number" id="pentaCount" value="1" min="1" disabled class="w-16 px-2 py-1 border border-gray-300 rounded text-center">
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -270,12 +272,16 @@
                 detail.push('超神：+20分')
             }
             if (document.getElementById('quadra').checked) {
-                score += 40
-                detail.push('4杀：+40分')
+                const quadraCount = parseInt(document.getElementById('quadraCount').value) || 1
+                const quadraScore = quadraCount * 40
+                score += quadraScore
+                detail.push(`4杀×${quadraCount}：+${quadraScore}分`)
             }
             if (document.getElementById('penta').checked) {
-                score += 100
-                detail.push('五杀：+100分')
+                const pentaCount = parseInt(document.getElementById('pentaCount').value) || 1
+                const pentaScore = pentaCount * 100
+                score += pentaScore
+                detail.push(`五杀×${pentaCount}：+${pentaScore}分`)
             }
             if (document.getElementById('lowestScore').checked) {
                 score -= 40
@@ -324,11 +330,22 @@
             document.getElementById('detail').innerHTML = detail.map(item => `<div>• ${item}</div>`).join('')
         }
 
+        // 监听四杀/五杀复选框状态切换
+        document.getElementById('quadra').addEventListener('change', (e) => {
+            document.getElementById('quadraCount').disabled = !e.target.checked
+        })
+        document.getElementById('penta').addEventListener('change', (e) => {
+            document.getElementById('pentaCount').disabled = !e.target.checked
+        })
+
         // 监听所有输入变化
         inputs.forEach(input => {
             input.addEventListener('input', calculate)
             input.addEventListener('change', calculate)
         })
+        // 额外监听四杀/五杀数量输入框变化
+        document.getElementById('quadraCount').addEventListener('input', calculate)
+        document.getElementById('pentaCount').addEventListener('input', calculate)
 
         // 初始化计算
         calculate()
@@ -437,7 +454,11 @@
                     document.getElementById('mvp').checked = latestMatch.mvp
                     document.getElementById('godlike').checked = latestMatch.godlike
                     document.getElementById('quadra').checked = latestMatch.quadra
+                    document.getElementById('quadraCount').disabled = !latestMatch.quadra
+                    document.getElementById('quadraCount').value = 1
                     document.getElementById('penta').checked = latestMatch.penta
+                    document.getElementById('pentaCount').disabled = !latestMatch.penta
+                    document.getElementById('pentaCount').value = 1
                     document.getElementById('lowestScore').checked = latestMatch.lowestScore
 
                     // 自动填充对位数据
