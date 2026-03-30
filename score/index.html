@@ -121,7 +121,7 @@
 
                         <div class="flex items-center gap-3">
                             <input type="checkbox" id="lowestScore" class="w-5 h-5 text-purple-600">
-                            <label class="text-gray-700 font-medium cursor-pointer">是否评分最低 <span class="text-red-600 text-sm">(-20)</span></label>
+                            <label class="text-gray-700 font-medium cursor-pointer">是否评分最低 <span class="text-red-600 text-sm">(-40)</span></label>
                         </div>
                     </div>
                 </div>
@@ -278,8 +278,8 @@
                 detail.push('五杀：+100分')
             }
             if (document.getElementById('lowestScore').checked) {
-                score -= 20
-                detail.push('评分最低：-20分')
+                score -= 40
+                detail.push('评分最低：-40分')
             }
 
             // 对位击杀数
