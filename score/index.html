@@ -114,12 +114,14 @@
 
                         <div class="flex items-center gap-3">
                             <input type="checkbox" id="enemyQuadra" class="w-5 h-5 text-pink-600">
-                            <label class="text-gray-700 font-medium cursor-pointer">对位是否4杀 <span class="text-red-600 text-sm">(-40)</span></label>
+                            <label class="text-gray-700 font-medium cursor-pointer">对位是否4杀 <span class="text-red-600 text-sm">(-40/个)</span></label>
+                            <input type="number" id="enemyQuadraCount" value="1" min="1" disabled class="w-16 px-2 py-1 border border-gray-300 rounded text-center">
                         </div>
 
                         <div class="flex items-center gap-3">
                             <input type="checkbox" id="enemyPenta" class="w-5 h-5 text-pink-600">
-                            <label class="text-gray-700 font-medium cursor-pointer">对位是否五杀 <span class="text-red-600 text-sm">(-100)</span></label>
+                            <label class="text-gray-700 font-medium cursor-pointer">对位是否五杀 <span class="text-red-600 text-sm">(-100/个)</span></label>
+                            <input type="number" id="enemyPentaCount" value="1" min="1" disabled class="w-16 px-2 py-1 border border-gray-300 rounded text-center">
                         </div>
                     </div>
                 </div>
@@ -273,12 +275,16 @@
                 detail.push('对位超神：-20分')
             }
             if (document.getElementById('enemyQuadra').checked) {
-                score -= 40
-                detail.push('对位4杀：-40分')
+                const enemyQuadraCount = parseInt(document.getElementById('enemyQuadraCount').value) || 1
+                const enemyQuadraScore = enemyQuadraCount * 40
+                score -= enemyQuadraScore
+                detail.push(`对位4杀×${enemyQuadraCount}：-${enemyQuadraScore}分`)
             }
             if (document.getElementById('enemyPenta').checked) {
-                score -= 100
-                detail.push('对位五杀：-100分')
+                const enemyPentaCount = parseInt(document.getElementById('enemyPentaCount').value) || 1
+                const enemyPentaScore = enemyPentaCount * 100
+                score -= enemyPentaScore
+                detail.push(`对位五杀×${enemyPentaCount}：-${enemyPentaScore}分`)
             }
 
             // 更新显示
@@ -294,6 +300,13 @@
         document.getElementById('penta').addEventListener('change', (e) => {
             document.getElementById('pentaCount').disabled = !e.target.checked
         })
+        // 监听对位四杀/五杀复选框状态切换
+        document.getElementById('enemyQuadra').addEventListener('change', (e) => {
+            document.getElementById('enemyQuadraCount').disabled = !e.target.checked
+        })
+        document.getElementById('enemyPenta').addEventListener('change', (e) => {
+            document.getElementById('enemyPentaCount').disabled = !e.target.checked
+        })
 
         // 监听所有输入变化
         inputs.forEach(input => {
@@ -303,6 +316,9 @@
         // 额外监听四杀/五杀数量输入框变化
         document.getElementById('quadraCount').addEventListener('input', calculate)
         document.getElementById('pentaCount').addEventListener('input', calculate)
+        // 额外监听对位四杀/五杀数量输入框变化
+        document.getElementById('enemyQuadraCount').addEventListener('input', calculate)
+        document.getElementById('enemyPentaCount').addEventListener('input', calculate)
 
         // 初始化计算
         calculate()
@@ -363,6 +379,11 @@
             document.querySelectorAll('input[type="number"]').forEach(input => input.value = '')
             // 取消所有checkbox勾选
             document.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false)
+            // 重置对位四杀/五杀数量输入框为默认值1并禁用
+            document.getElementById('enemyQuadraCount').value = 1
+            document.getElementById('enemyQuadraCount').disabled = true
+            document.getElementById('enemyPentaCount').value = 1
+            document.getElementById('enemyPentaCount').disabled = true
             // 重新计算
             calculate()
         })
