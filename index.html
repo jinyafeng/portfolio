@@ -152,6 +152,58 @@
             <p>欢迎访问我的个人项目集合</p>
         </div>
 
+        <!-- 服务器状态卡片 -->
+        <div class="mb-12 p-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl shadow-2xl border-2 border-purple-200">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🖥️ 服务器实时状态</h2>
+                <span id="updateTime" class="text-sm text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm">更新中...</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-blue-200 shadow-sm hover:shadow-md transition-all">
+                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
+                        <span>💻</span> CPU 使用率
+                    </div>
+                    <div class="flex items-end gap-2 mb-3">
+                        <span id="cpuUsage" class="text-4xl font-bold text-blue-600">--</span>
+                        <span class="text-lg text-gray-500">%</span>
+                    </div>
+                    <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="cpuBar" class="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-green-200 shadow-sm hover:shadow-md transition-all">
+                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
+                        <span>🧠</span> 内存使用率
+                    </div>
+                    <div class="flex items-end gap-2 mb-3">
+                        <span id="memUsage" class="text-4xl font-bold text-green-600">--</span>
+                        <span class="text-lg text-gray-500">%</span>
+                    </div>
+                    <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="memBar" class="h-full bg-gradient-to-r from-green-400 to-teal-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-orange-200 shadow-sm hover:shadow-md transition-all">
+                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
+                        <span>💽</span> 磁盘使用率
+                    </div>
+                    <div class="flex items-end gap-2 mb-3">
+                        <span id="diskUsage" class="text-4xl font-bold text-orange-600">--</span>
+                        <span class="text-lg text-gray-500">%</span>
+                    </div>
+                    <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="diskBar" class="h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-pink-200 shadow-sm hover:shadow-md transition-all">
+                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
+                        <span>⏱️</span> 系统运行时间
+                    </div>
+                    <div class="text-3xl font-bold bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent" id="uptime">--</div>
+                </div>
+            </div>
+        </div>
+
         <div class="grid">
 
             <a href="/blog" class="card">
@@ -194,50 +246,6 @@
                     <span class="tag">自定义规则</span>
                 </div>
             </a>
-        </div>
-
-        <!-- 服务器状态卡片 -->
-        <div class="mt-12 p-8 bg-white rounded-2xl shadow-2xl">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">🖥️ 服务器实时状态</h2>
-                <span id="updateTime" class="text-sm text-gray-500">更新中...</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
-                    <div class="text-sm text-gray-600 mb-2">CPU 使用率</div>
-                    <div class="flex items-end gap-2">
-                        <span id="cpuUsage" class="text-3xl font-bold text-blue-600">--</span>
-                        <span class="text-lg text-gray-500">%</span>
-                    </div>
-                    <div class="w-full h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
-                        <div id="cpuBar" class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-xl p-4 border border-green-200">
-                    <div class="text-sm text-gray-600 mb-2">内存使用率</div>
-                    <div class="flex items-end gap-2">
-                        <span id="memUsage" class="text-3xl font-bold text-green-600">--</span>
-                        <span class="text-lg text-gray-500">%</span>
-                    </div>
-                    <div class="w-full h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
-                        <div id="memBar" class="h-full bg-green-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
-                    <div class="text-sm text-gray-600 mb-2">磁盘使用率</div>
-                    <div class="flex items-end gap-2">
-                        <span id="diskUsage" class="text-3xl font-bold text-orange-600">--</span>
-                        <span class="text-lg text-gray-500">%</span>
-                    </div>
-                    <div class="w-full h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
-                        <div id="diskBar" class="h-full bg-orange-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div class="bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl p-4 border border-pink-200">
-                    <div class="text-sm text-gray-600 mb-2">系统运行时间</div>
-                    <div class="text-2xl font-bold text-pink-600" id="uptime">--</div>
-                </div>
-            </div>
         </div>
 
         <div class="footer">
