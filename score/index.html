@@ -13,50 +13,7 @@
             <button id="resetBtn" class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all">🔄 重置</button>
         </div>
 
-        <!-- 自动查询模块 -->
-        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8 border border-blue-200">
-            <h3 class="text-xl font-semibold text-blue-600 mb-4">🔍 一键查询最近战绩</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="space-y-2">
-                    <label class="text-gray-700 font-medium">召唤师名称</label>
-                    <input type="text" id="summonerName" placeholder="请输入召唤师ID" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-gray-700 font-medium">所在区服</label>
-                    <select id="server" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="1">艾欧尼亚</option>
-                        <option value="2">比尔吉沃特</option>
-                        <option value="3">祖安</option>
-                        <option value="4">诺克萨斯</option>
-                        <option value="5">班德尔城</option>
-                        <option value="6">德玛西亚</option>
-                        <option value="7">皮尔特沃夫</option>
-                        <option value="8">战争学院</option>
-                        <option value="9">弗雷尔卓德</option>
-                        <option value="10">巨神峰</option>
-                        <option value="11">雷瑟守备</option>
-                        <option value="12">无畏先锋</option>
-                        <option value="13">裁决之地</option>
-                        <option value="14">黑色玫瑰</option>
-                        <option value="15">暗影岛</option>
-                        <option value="16">钢铁烈阳</option>
-                        <option value="17">水晶之痕</option>
-                        <option value="18">均衡教派</option>
-                        <option value="19">影流</option>
-                        <option value="20">守望之海</option>
-                        <option value="21">征服之海</option>
-                        <option value="22">卡拉曼达</option>
-                        <option value="23">皮城警备</option>
-                        <option value="24">男爵领域</option>
-                        <option value="25">峡谷之巅</option>
-                    </select>
-                </div>
-                <div class="flex items-end">
-                    <button id="queryBtn" class="w-full px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all">查询最近一局</button>
-                </div>
-            </div>
-            <div id="queryStatus" class="mt-3 text-sm text-gray-600 hidden"></div>
-        </div>
+
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- 我的数据 -->
@@ -418,72 +375,7 @@
             }
         })
 
-        // 战绩查询功能
-        document.getElementById('queryBtn').addEventListener('click', async () => {
-            const summonerName = document.getElementById('summonerName').value.trim()
-            const server = document.getElementById('server').value
-            const statusEl = document.getElementById('queryStatus')
-            
-            if (!summonerName) {
-                statusEl.textContent = '请输入召唤师名称'
-                statusEl.className = 'mt-3 text-sm text-red-600'
-                statusEl.classList.remove('hidden')
-                return
-            }
 
-            statusEl.textContent = '正在查询中...'
-            statusEl.className = 'mt-3 text-sm text-blue-600'
-            statusEl.classList.remove('hidden')
-
-            try {
-                // 调用我们自己搭建的掌盟免费接口，不需要密钥
-                const res = await fetch(`/lol/match?summonerName=${encodeURIComponent(summonerName)}&server=${server}`)
-                const data = await res.json()
-
-                if (data.error === 0) {
-                    const latestMatch = data.data
-
-                    // 自动填充数据
-                    document.querySelector(`input[name="gameResult"][value="${latestMatch.win ? 'win' : 'lose'}"]`).checked = true
-                    document.getElementById('kills').value = latestMatch.kills
-                    document.getElementById('deaths').value = latestMatch.deaths
-                    document.getElementById('soloKills').value = latestMatch.soloKills || 0
-                    document.getElementById('soloDeaths').value = latestMatch.soloDeaths || 0
-                    
-                    // 自动勾选成就
-                    document.getElementById('mvp').checked = latestMatch.mvp
-                    document.getElementById('godlike').checked = latestMatch.godlike
-                    document.getElementById('quadra').checked = latestMatch.quadra
-                    document.getElementById('quadraCount').disabled = !latestMatch.quadra
-                    document.getElementById('quadraCount').value = 1
-                    document.getElementById('penta').checked = latestMatch.penta
-                    document.getElementById('pentaCount').disabled = !latestMatch.penta
-                    document.getElementById('pentaCount').value = 1
-                    document.getElementById('lowestScore').checked = latestMatch.lowestScore
-
-                    // 自动填充对位数据
-                    document.getElementById('enemyKills').value = latestMatch.enemyKills || ''
-                    document.getElementById('enemyDeaths').value = latestMatch.enemyDeaths || ''
-                    document.getElementById('enemyMvp').checked = latestMatch.enemyMvp
-                    document.getElementById('enemyGodlike').checked = latestMatch.enemyGodlike
-                    document.getElementById('enemyQuadra').checked = latestMatch.enemyQuadra
-                    document.getElementById('enemyPenta').checked = latestMatch.enemyPenta
-
-                    // 重新计算积分
-                    calculate()
-                    
-                    statusEl.textContent = '查询成功！数据已自动填充'
-                    statusEl.className = 'mt-3 text-sm text-green-600'
-                } else {
-                    statusEl.textContent = `查询失败：${data.msg || '未查询到战绩'}`
-                    statusEl.className = 'mt-3 text-sm text-red-600'
-                }
-            } catch (e) {
-                statusEl.textContent = `查询失败：网络错误`
-                statusEl.className = 'mt-3 text-sm text-red-600'
-                console.error(e)
-            }
-        })
 
         // 页面加载时渲染历史
         renderHistory()
