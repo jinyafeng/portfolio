@@ -222,7 +222,6 @@
                     <div class="w-full h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
                         <div id="memBar" class="h-full bg-green-500 rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-1" id="memInfo">-- / -- GB</div>
                 </div>
                 <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
                     <div class="text-sm text-gray-600 mb-2">磁盘使用率</div>
@@ -233,7 +232,6 @@
                     <div class="w-full h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
                         <div id="diskBar" class="h-full bg-orange-500 rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-1" id="diskInfo">-- / -- GB</div>
                 </div>
                 <div class="bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl p-4 border border-pink-200">
                     <div class="text-sm text-gray-600 mb-2">系统运行时间</div>
@@ -257,10 +255,8 @@
                 document.getElementById('cpuBar').style.width = data.cpuUsage + '%'
                 document.getElementById('memUsage').textContent = data.memUsage.toFixed(1)
                 document.getElementById('memBar').style.width = data.memUsage + '%'
-                document.getElementById('memInfo').textContent = `${data.memUsed.toFixed(1)} / ${data.memTotal.toFixed(1)} GB`
                 document.getElementById('diskUsage').textContent = data.diskUsage.toFixed(1)
                 document.getElementById('diskBar').style.width = data.diskUsage + '%'
-                document.getElementById('diskInfo').textContent = `${data.diskUsed.toFixed(1)} / ${data.diskTotal.toFixed(1)} GB`
                 document.getElementById('uptime').textContent = data.uptime
                 document.getElementById('updateTime').textContent = `更新于 ${new Date().toLocaleTimeString('zh-CN')}`
             } catch (e) {
