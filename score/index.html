@@ -379,6 +379,11 @@
             document.querySelectorAll('input[type="number"]').forEach(input => input.value = '')
             // 取消所有checkbox勾选
             document.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false)
+            // 重置自己的四杀/五杀数量输入框为默认值1并禁用
+            document.getElementById('quadraCount').value = 1
+            document.getElementById('quadraCount').disabled = true
+            document.getElementById('pentaCount').value = 1
+            document.getElementById('pentaCount').disabled = true
             // 重置对位四杀/五杀数量输入框为默认值1并禁用
             document.getElementById('enemyQuadraCount').value = 1
             document.getElementById('enemyQuadraCount').disabled = true
