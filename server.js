@@ -3,6 +3,30 @@ const os = require('os')
 const app = express()
 const PORT = 3001
 
+// 计算CPU使用率（通过top命令直接读取实时值）
+function getCpuUsage() {
+    try {
+        const { execSync } = require('child_process')
+        // 执行top命令取瞬时CPU使用率，取空闲率然后100减
+        const topOutput = execSync('top -bn1 | grep "%Cpu(s)"', { encoding: 'utf8' })
+        const idleMatch = topOutput.match(/(\d+\.\d+)\s+id/)
+        if (idleMatch) {
+            const idle = parseFloat(idleMatch[1])
+            return Math.round(100 - idle)
+        }
+        // 备用方案：用mpstat
+        const mpstatOutput = execSync('mpstat 1 1 | grep "Average"', { encoding: 'utf8' })
+        const mpstatIdleMatch = mpstatOutput.match(/(\d+\.\d+)\s*$/)
+        if (mpstatIdleMatch) {
+            const idle = parseFloat(mpstatIdleMatch[1])
+            return Math.round(100 - idle)
+        }
+        return 0
+    } catch (e) {
+        return 0
+    }
+}
+
 // 允许跨域
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')
@@ -11,18 +35,8 @@ app.use((req, res, next) => {
 
 // 服务器状态接口
 app.get('/api/server-status', (req, res) => {
-    // CPU使用率计算
-    const cpus = os.cpus()
-    let totalIdle = 0, totalTick = 0
-    cpus.forEach(cpu => {
-        for (let type in cpu.times) {
-            totalTick += cpu.times[type]
-        }
-        totalIdle += cpu.times.idle
-    })
-    const idle = totalIdle / cpus.length
-    const total = totalTick / cpus.length
-    const cpuUsage = 100 - ~~(100 * idle / total)
+    // CPU使用率计算（实时）
+    const cpuUsage = getCpuUsage()
 
     // 内存信息
     const memTotal = os.totalmem() / 1024 / 1024 / 1024
