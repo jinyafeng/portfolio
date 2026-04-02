@@ -137,6 +137,68 @@
             opacity: 0.8;
         }
 
+        /* 服务器状态一行布局 */
+        .server-status-bar {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 32px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .status-title {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-items {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+
+        .status-item .label {
+            font-weight: 500;
+            color: #718096;
+        }
+
+        .status-item .value {
+            font-weight: 700;
+        }
+
+        .status-item.cpu .value { color: #3b82f6; }
+        .status-item.mem .value { color: #10b981; }
+        .status-item.disk .value { color: #f59e0b; }
+        .status-item.uptime .value { color: #ec4899; }
+
+        .update-time {
+            font-size: 12px;
+            color: #9ca3af;
+            background: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 32px;
@@ -144,6 +206,15 @@
 
             .grid {
                 grid-template-columns: 1fr;
+            }
+
+            .server-status-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .status-items {
+                gap: 16px;
             }
         }
     </style>
@@ -155,56 +226,30 @@
             <p>欢迎访问我的个人项目集合</p>
         </div>
 
-        <!-- 服务器状态卡片 -->
-        <div class="mb-12 p-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl shadow-2xl border-2 border-purple-200">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🖥️ 服务器实时状态</h2>
-                <span id="updateTime" class="text-sm text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm">更新中...</span>
+        <!-- 服务器状态一行展示 -->
+        <div class="server-status-bar">
+            <div class="status-title">
+                <span>🖥️</span> 服务器实时状态
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-blue-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
-                        <span>💻</span> CPU 使用率
-                    </div>
-                    <div class="flex items-end gap-2 mb-3">
-                        <span id="cpuUsage" class="text-4xl font-bold text-blue-600">--</span>
-                        <span class="text-lg text-gray-500">%</span>
-                    </div>
-                    <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                        <div id="cpuBar" class="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
+            <div class="status-items">
+                <div class="status-item cpu">
+                    <span class="label">CPU:</span>
+                    <span class="value" id="cpuUsage">--%</span>
                 </div>
-                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-green-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
-                        <span>🧠</span> 内存使用率
-                    </div>
-                    <div class="flex items-end gap-2 mb-3">
-                        <span id="memUsage" class="text-4xl font-bold text-green-600">--</span>
-                        <span class="text-lg text-gray-500">%</span>
-                    </div>
-                    <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                        <div id="memBar" class="h-full bg-gradient-to-r from-green-400 to-teal-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
+                <div class="status-item mem">
+                    <span class="label">内存:</span>
+                    <span class="value" id="memUsage">--%</span>
                 </div>
-                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-orange-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
-                        <span>💽</span> 磁盘使用率
-                    </div>
-                    <div class="flex items-end gap-2 mb-3">
-                        <span id="diskUsage" class="text-4xl font-bold text-orange-600">--</span>
-                        <span class="text-lg text-gray-500">%</span>
-                    </div>
-                    <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                        <div id="diskBar" class="h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
+                <div class="status-item disk">
+                    <span class="label">磁盘:</span>
+                    <span class="value" id="diskUsage">--%</span>
                 </div>
-                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-pink-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-sm font-medium text-gray-600 mb-3 flex items-center gap-1">
-                        <span>⏱️</span> 系统运行时间
-                    </div>
-                    <div class="text-3xl font-bold bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent" id="uptime">--</div>
+                <div class="status-item uptime">
+                    <span class="label">运行时间:</span>
+                    <span class="value" id="uptime">--</span>
                 </div>
             </div>
+            <div class="update-time" id="updateTime">更新中...</div>
         </div>
 
         <div class="grid">
@@ -275,12 +320,9 @@
                 const res = await fetch('/server-status')
                 const data = await res.json()
                 // 更新数据
-                document.getElementById('cpuUsage').textContent = data.cpuUsage.toFixed(1)
-                document.getElementById('cpuBar').style.width = data.cpuUsage + '%'
-                document.getElementById('memUsage').textContent = data.memUsage.toFixed(1)
-                document.getElementById('memBar').style.width = data.memUsage + '%'
-                document.getElementById('diskUsage').textContent = data.diskUsage.toFixed(1)
-                document.getElementById('diskBar').style.width = data.diskUsage + '%'
+                document.getElementById('cpuUsage').textContent = data.cpuUsage + '%'
+                document.getElementById('memUsage').textContent = data.memUsage + '%'
+                document.getElementById('diskUsage').textContent = data.diskUsage + '%'
                 document.getElementById('uptime').textContent = data.uptime
                 document.getElementById('updateTime').textContent = `更新于 ${new Date().toLocaleTimeString('zh-CN')}`
             } catch (e) {
@@ -289,7 +331,7 @@
         }
         // 页面加载时立即获取，之后每30秒刷新一次
         fetchServerStatus()
-        setInterval(fetchServerStatus, 3000)
+        setInterval(fetchServerStatus, 1000) // 改为30秒刷新一次，减少请求
     </script>
     </div>
 </body>
