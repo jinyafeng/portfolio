@@ -1238,37 +1238,37 @@
                 gfm: true,
             });
 
-            // 自定义渲染器，匹配原有样式
+            // 自定义渲染器，匹配原有样式 (marked v15+ API)
             const renderer = new marked.Renderer();
 
             // 代码块
-            renderer.code = (code, lang) => {
+            renderer.code = ({ text: code, lang }) => {
                 return `<pre><code>${escapeHtml(code.trim())}</code></pre>`;
             };
 
             // 行内代码
-            renderer.codespan = (code) => {
+            renderer.codespan = ({ text: code }) => {
                 return `<code>${escapeHtml(code)}</code>`;
             };
 
             // 表格
-            renderer.table = (header, body) => {
+            renderer.table = ({ header, body }) => {
                 return `<table style="border-collapse:collapse;margin:10px 0;font-size:14px">${header}${body}</table>`;
             };
 
-            renderer.tablecell = (content, flags) => {
+            renderer.tablecell = ({ text: content, flags }) => {
                 const tag = flags.header ? 'th' : 'td';
                 const style = flags.header ? 'padding:8px 12px;border:1px solid var(--border-color);font-weight:600;text-align:left' : 'padding:6px 12px;border:1px solid var(--border-color)';
                 return `<${tag} style="${style}">${content}</${tag}>`;
             };
 
             // 引用
-            renderer.blockquote = (quote) => {
+            renderer.blockquote = ({ text: quote }) => {
                 return `<blockquote style="border-left:3px solid var(--accent);padding-left:12px;color:var(--text-secondary);margin:8px 0">${quote}</blockquote>`;
             };
 
             // 列表
-            renderer.list = (body, ordered) => {
+            renderer.list = ({ body, ordered }) => {
                 const type = ordered ? 'decimal' : 'disc';
                 return `<ul style="margin-left:18px;list-style:${type}">${body}</ul>`;
             };
