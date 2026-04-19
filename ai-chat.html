@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1231,31 +1232,51 @@
         }
 
         function renderMarkdown(text) {
-            var h = escapeHtml(text);
-            h = h.replace(/```(\w*)\n([\s\S]*?)```/g, function(_, lang, code) { return '<pre><code>' + code.trim() + '</code></pre>'; });
-            h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
-            h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            h = h.replace(/^&gt; (.+)$/gm, '<blockquote style="border-left:3px solid var(--accent);padding-left:12px;color:var(--text-secondary);margin:8px 0">$1</blockquote>');
-            h = h.replace(/\|(.+)\|/g, function(match) {
-                var cells = match.split('|').filter(function(c) { return c.trim(); });
-                if (cells.every(function(c) { return /^[-:\s]+$/.test(c.trim()); })) return '';
-                return '<tr>' + cells.map(function(c) { return '<td style="padding:6px 12px;border:1px solid var(--border-color)">' + c.trim() + '</td>'; }).join('') + '</tr>';
+            // 配置 marked.js
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
             });
-            h = h.replace(/((<tr>.*?<\/tr>\s*)+)/g, '<table style="border-collapse:collapse;margin:10px 0;font-size:14px">$1</table>');
-            h = h.replace(/^- (.+)$/gm, '<li style="margin-left:18px;list-style:disc">$1</li>');
-            h = h.replace(/^\d+\. (.+)$/gm, '<li style="margin-left:18px;list-style:decimal">$1</li>');
-            h = h.replace(/\n\n/g, '</p><p>');
-            h = '<p>' + h + '</p>';
-            h = h.replace(/<p>\s*<\/p>/g, '');
-            h = h.replace(/<p>\s*(<pre>)/g, '$1');
-            h = h.replace(/(<\/pre>)\s*<\/p>/g, '$1');
-            h = h.replace(/<p>\s*(<table)/g, '$1');
-            h = h.replace(/(<\/table>)\s*<\/p>/g, '$1');
-            h = h.replace(/<p>\s*(<li)/g, '$1');
-            h = h.replace(/(<\/li>)\s*<\/p>/g, '$1');
-            h = h.replace(/<p>\s*(<blockquote)/g, '$1');
-            h = h.replace(/(<\/blockquote>)\s*<\/p>/g, '$1');
-            return h;
+
+            // 自定义渲染器，匹配原有样式
+            const renderer = new marked.Renderer();
+
+            // 代码块
+            renderer.code = (code, lang) => {
+                return `<pre><code>${escapeHtml(code.trim())}</code></pre>`;
+            };
+
+            // 行内代码
+            renderer.codespan = (code) => {
+                return `<code>${escapeHtml(code)}</code>`;
+            };
+
+            // 表格
+            renderer.table = (header, body) => {
+                return `<table style="border-collapse:collapse;margin:10px 0;font-size:14px">${header}${body}</table>`;
+            };
+
+            renderer.tablecell = (content, flags) => {
+                const tag = flags.header ? 'th' : 'td';
+                const style = flags.header ? 'padding:8px 12px;border:1px solid var(--border-color);font-weight:600;text-align:left' : 'padding:6px 12px;border:1px solid var(--border-color)';
+                return `<${tag} style="${style}">${content}</${tag}>`;
+            };
+
+            // 引用
+            renderer.blockquote = (quote) => {
+                return `<blockquote style="border-left:3px solid var(--accent);padding-left:12px;color:var(--text-secondary);margin:8px 0">${quote}</blockquote>`;
+            };
+
+            // 列表
+            renderer.list = (body, ordered) => {
+                const type = ordered ? 'decimal' : 'disc';
+                return `<ul style="margin-left:18px;list-style:${type}">${body}</ul>`;
+            };
+
+            marked.use({ renderer });
+
+            // 解析 Markdown
+            return marked.parse(text);
         }
 
         function escapeHtml(text) {
