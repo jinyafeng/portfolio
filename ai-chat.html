@@ -1231,42 +1231,18 @@
             return row;
         }
 
-        function renderMarkdown(text) {
-            // 配置 marked.js
-            marked.setOptions({
-                breaks: true,
-                gfm: true,
-            });
-
-            // 自定义渲染器，匹配原有样式 (marked v15+ API)
-            const renderer = new marked.Renderer();
-
-            // 代码块 - 保持原有样式
-            renderer.code = ({ text: code }) => {
-                return `<pre><code>${escapeHtml(code.trim())}</code></pre>`;
-            };
-
-            // 引用
-            renderer.blockquote = ({ text: quote }) => {
-                return `<blockquote style="border-left:3px solid var(--accent);padding-left:12px;color:var(--text-secondary);margin:8px 0">${quote}</blockquote>`;
-            };
-
-            // 列表
-            renderer.list = ({ body, ordered }) => {
-                const type = ordered ? 'decimal' : 'disc';
-                return `<ul style="margin-left:18px;list-style:${type}">${body}</ul>`;
-            };
-
-            marked.use({ renderer });
-
-            // 解析 Markdown
-            return marked.parse(text);
-        }
-
         function escapeHtml(text) {
             var div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function renderMarkdown(text) {
+            try {
+                return marked.parse(text);
+            } catch (e) {
+                return escapeHtml(text);
+            }
         }
 
         function scrollToBottom() {
