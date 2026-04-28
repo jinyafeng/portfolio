@@ -996,7 +996,7 @@
             siliconflow: { base: 'https://api.siliconflow.cn/v1', model: 'Qwen/Qwen2.5-7B-Instruct' },
             moonshot:  { base: 'https://api.moonshot.cn/v1', model: 'moonshot-v1-8k' },
             zhipu:     { base: 'https://open.bigmodel.cn/api/paas/v1', model: 'glm-4-flash' },
-            maf:      { base: '/api/meai', model: 'minimax' },
+            maf:      { base: '/api/meai', model: 'MiniMax-M2' },
         };
 
         // State
@@ -1065,6 +1065,12 @@
             document.getElementById('modelName').value = p.model;
             document.querySelectorAll('.preset-chip').forEach(function(el) { el.classList.remove('active'); });
             event.target.classList.add('active');
+            // 保存到 localStorage
+            localStorage.setItem('chat_api_base', p.base);
+            // 对于 MAF 后端不需要真实 API Key，设置占位符即可
+            localStorage.setItem('chat_api_key', localStorage.getItem('chat_api_key') || 'maf-placeholder');
+            localStorage.setItem('chat_model', p.model);
+            updateModeUI();
         }
 
         document.getElementById('settingsModal').addEventListener('click', function(e) {
@@ -1082,7 +1088,7 @@
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + cfg.apiKey,
                     },
-                    body: JSON.stringify({ model: cfg.model, messages: messages, stream: true }),
+                    body: JSON.stringify({ model: cfg.model, messages: messages, stream: true, provider: 'minimax' }),
                     signal: abortController.signal,
                 });
                 if (!res.ok) {
