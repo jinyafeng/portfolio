@@ -327,22 +327,11 @@
             <a href="/tools/" class="card">
                 <div class="icon-wrap" style="background:rgba(236,72,153,0.12);color:#ec4899">🧰</div>
                 <h3>工具集</h3>
-                <p>实用在线工具合集，文生图、AI模型排班表持续更新中</p>
+                <p>实用在线工具合集，文生图等更多功能持续开发中</p>
                 <div class="tags">
                     <span class="tag">在线工具</span>
                     <span class="tag">文生图</span>
-                    <span class="tag">排班表</span>
-                </div>
-            </a>
-
-            <a href="/tools/schedule" class="card">
-                <div class="icon-wrap" style="background:rgba(59,130,246,0.12);color:#60a5fa">📋</div>
-                <h3>AI模型排班表</h3>
-                <p>按周自动轮换AI模型展示顺序，支持自定义模型列表</p>
-                <div class="tags">
-                    <span class="tag">AI</span>
-                    <span class="tag">排班</span>
-                    <span class="tag">轮换</span>
+                    <span class="tag">持续更新</span>
                 </div>
             </a>
 
