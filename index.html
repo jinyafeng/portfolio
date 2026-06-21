@@ -338,7 +338,7 @@
             <a href="/tools/schedule" class="card">
                 <div class="icon-wrap" style="background:rgba(59,130,246,0.12);color:#60a5fa">📋</div>
                 <h3>AI模型排班表</h3>
-                <p>按周自动轮换AI模型展示顺序，支持自定义模型列表</p>
+                <p id="scheduleDesc">按周自动轮换AI模型展示顺序，支持自定义模型列表</p>
                 <div class="tags">
                     <span class="tag">AI</span>
                     <span class="tag">排班</span>
@@ -399,6 +399,22 @@
                 card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
             });
         });
+
+        // Fetch schedule and update homepage
+        async function updateScheduleDisplay() {
+            try {
+                const r = await fetch('/tools/api/schedule/current');
+                const d = await r.json();
+                const desc = document.getElementById('scheduleDesc');
+                if (desc && d.default_model) {
+                    const order = d.schedule.map(m => m.name).join(' → ');
+                    desc.textContent = '本周默认: ' + d.default_model + ' | ' + order;
+                }
+            } catch(e) {
+                // silently ignore
+            }
+        }
+        updateScheduleDisplay();
     </script>
 </body>
 </html>
